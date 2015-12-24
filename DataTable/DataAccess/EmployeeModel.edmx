@@ -1,0 +1,532 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="EmployeeModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Department">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Name" Type="varchar" MaxLength="15" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="3" Nullable="false" />
+          <Property Name="ManagerSSN" Type="char" MaxLength="9" Nullable="false" />
+          <Property Name="ManagerStartDate" Type="date" />
+        </EntityType>
+        <EntityType Name="DepartmentLocation">
+          <Key>
+            <PropertyRef Name="DepartmentCode" />
+            <PropertyRef Name="Location" />
+          </Key>
+          <Property Name="DepartmentCode" Type="varchar" MaxLength="3" Nullable="false" />
+          <Property Name="Location" Type="varchar" MaxLength="15" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Dependent">
+          <Key>
+            <PropertyRef Name="EmployeeSSN" />
+            <PropertyRef Name="Name" />
+          </Key>
+          <Property Name="EmployeeSSN" Type="char" MaxLength="9" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="15" Nullable="false" />
+          <Property Name="Gender" Type="char" MaxLength="1" />
+          <Property Name="Birthday" Type="date" />
+          <Property Name="Relationship" Type="varchar" MaxLength="8" />
+        </EntityType>
+        <EntityType Name="Employee">
+          <Key>
+            <PropertyRef Name="SSN" />
+          </Key>
+          <Property Name="FirstName" Type="varchar" MaxLength="15" Nullable="false" />
+          <Property Name="MidName" Type="char" MaxLength="1" />
+          <Property Name="LastName" Type="varchar" MaxLength="15" Nullable="false" />
+          <Property Name="SSN" Type="char" MaxLength="9" Nullable="false" />
+          <Property Name="Birthday" Type="date" />
+          <Property Name="Address" Type="varchar" MaxLength="50" />
+          <Property Name="Gender" Type="char" MaxLength="1" />
+          <Property Name="Salary" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="SupervisorSSN" Type="char" MaxLength="9" />
+          <Property Name="DepartmentCode" Type="varchar" MaxLength="3" />
+        </EntityType>
+        <EntityType Name="Project">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="Name" Type="varchar" MaxLength="15" Nullable="false" />
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Location" Type="varchar" MaxLength="15" />
+          <Property Name="DepartmentCode" Type="varchar" MaxLength="3" />
+        </EntityType>
+        <EntityType Name="WorkOn">
+          <Key>
+            <PropertyRef Name="EmployeeSSN" />
+            <PropertyRef Name="ProjectID" />
+          </Key>
+          <Property Name="EmployeeSSN" Type="char" MaxLength="9" Nullable="false" />
+          <Property Name="ProjectID" Type="int" Nullable="false" />
+          <Property Name="Hours" Type="float" Nullable="false" />
+        </EntityType>
+        <Association Name="FK__Departmen__Depar__1CF15040">
+          <End Role="Department" Type="Self.Department" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="DepartmentLocation" Type="Self.DepartmentLocation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="DepartmentLocation">
+              <PropertyRef Name="DepartmentCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Dependent__Emplo__1DE57479">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Dependent" Type="Self.Dependent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="SSN" />
+            </Principal>
+            <Dependent Role="Dependent">
+              <PropertyRef Name="EmployeeSSN" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Employee__Depart__1ED998B2">
+          <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+          <End Role="Employee" Type="Self.Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="Employee">
+              <PropertyRef Name="DepartmentCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Employee__Superv__1FCDBCEB">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="0..1" />
+          <End Role="Employee1" Type="Self.Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="SSN" />
+            </Principal>
+            <Dependent Role="Employee1">
+              <PropertyRef Name="SupervisorSSN" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__WorkOn__Employee__21B6055D">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="WorkOn" Type="Self.WorkOn" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="SSN" />
+            </Principal>
+            <Dependent Role="WorkOn">
+              <PropertyRef Name="EmployeeSSN" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__WorkOn__ProjectI__1DE57479">
+          <End Role="Project" Type="Self.Project" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="WorkOn" Type="Self.WorkOn" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="WorkOn">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Project_Department">
+          <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+          <End Role="Project" Type="Self.Project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="Project">
+              <PropertyRef Name="DepartmentCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ManagerSSN">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="1" />
+          <End Role="Department" Type="Self.Department" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="SSN" />
+            </Principal>
+            <Dependent Role="Department">
+              <PropertyRef Name="ManagerSSN" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="EmployeeModelStoreContainer">
+          <EntitySet Name="Department" EntityType="Self.Department" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DepartmentLocation" EntityType="Self.DepartmentLocation" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Dependent" EntityType="Self.Dependent" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Employee" EntityType="Self.Employee" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Project" EntityType="Self.Project" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="WorkOn" EntityType="Self.WorkOn" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__Departmen__Depar__1CF15040" Association="Self.FK__Departmen__Depar__1CF15040">
+            <End Role="Department" EntitySet="Department" />
+            <End Role="DepartmentLocation" EntitySet="DepartmentLocation" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Dependent__Emplo__1DE57479" Association="Self.FK__Dependent__Emplo__1DE57479">
+            <End Role="Employee" EntitySet="Employee" />
+            <End Role="Dependent" EntitySet="Dependent" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Employee__Depart__1ED998B2" Association="Self.FK__Employee__Depart__1ED998B2">
+            <End Role="Department" EntitySet="Department" />
+            <End Role="Employee" EntitySet="Employee" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Employee__Superv__1FCDBCEB" Association="Self.FK__Employee__Superv__1FCDBCEB">
+            <End Role="Employee" EntitySet="Employee" />
+            <End Role="Employee1" EntitySet="Employee" />
+          </AssociationSet>
+          <AssociationSet Name="FK__WorkOn__Employee__21B6055D" Association="Self.FK__WorkOn__Employee__21B6055D">
+            <End Role="Employee" EntitySet="Employee" />
+            <End Role="WorkOn" EntitySet="WorkOn" />
+          </AssociationSet>
+          <AssociationSet Name="FK__WorkOn__ProjectI__1DE57479" Association="Self.FK__WorkOn__ProjectI__1DE57479">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="WorkOn" EntitySet="WorkOn" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Project_Department" Association="Self.FK_Project_Department">
+            <End Role="Department" EntitySet="Department" />
+            <End Role="Project" EntitySet="Project" />
+          </AssociationSet>
+          <AssociationSet Name="ManagerSSN" Association="Self.ManagerSSN">
+            <End Role="Employee" EntitySet="Employee" />
+            <End Role="Department" EntitySet="Department" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="EmployeeModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Department">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Name" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Code" Type="String" MaxLength="3" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ManagerSSN" Type="String" MaxLength="9" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="ManagerStartDate" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="DepartmentLocations" Relationship="Self.FK__Departmen__Depar__1CF15040" FromRole="Department" ToRole="DepartmentLocation" />
+          <NavigationProperty Name="Employees" Relationship="Self.FK__Employee__Depart__1ED998B2" FromRole="Department" ToRole="Employee" />
+          <NavigationProperty Name="Projects" Relationship="Self.FK_Project_Department" FromRole="Department" ToRole="Project" />
+          <NavigationProperty Name="Employee" Relationship="Self.ManagerSSN" FromRole="Department" ToRole="Employee" />
+        </EntityType>
+        <EntityType Name="DepartmentLocation">
+          <Key>
+            <PropertyRef Name="DepartmentCode" />
+            <PropertyRef Name="Location" />
+          </Key>
+          <Property Name="DepartmentCode" Type="String" MaxLength="3" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Location" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Department" Relationship="Self.FK__Departmen__Depar__1CF15040" FromRole="DepartmentLocation" ToRole="Department" />
+        </EntityType>
+        <EntityType Name="Dependent">
+          <Key>
+            <PropertyRef Name="EmployeeSSN" />
+            <PropertyRef Name="Name" />
+          </Key>
+          <Property Name="EmployeeSSN" Type="String" MaxLength="9" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Gender" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Birthday" Type="DateTime" Precision="0" />
+          <Property Name="Relationship" Type="String" MaxLength="8" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Employee" Relationship="Self.FK__Dependent__Emplo__1DE57479" FromRole="Dependent" ToRole="Employee" />
+        </EntityType>
+        <EntityType Name="Employee">
+          <Key>
+            <PropertyRef Name="SSN" />
+          </Key>
+          <Property Name="FirstName" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="MidName" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="LastName" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SSN" Type="String" MaxLength="9" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="Birthday" Type="DateTime" Precision="0" />
+          <Property Name="Address" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Gender" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Salary" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="SupervisorSSN" Type="String" MaxLength="9" FixedLength="true" Unicode="false" />
+          <Property Name="DepartmentCode" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Department" Relationship="Self.FK__Employee__Depart__1ED998B2" FromRole="Employee" ToRole="Department" />
+          <NavigationProperty Name="Departments" Relationship="Self.ManagerSSN" FromRole="Employee" ToRole="Department" />
+          <NavigationProperty Name="Dependents" Relationship="Self.FK__Dependent__Emplo__1DE57479" FromRole="Employee" ToRole="Dependent" />
+          <NavigationProperty Name="Employee1" Relationship="Self.FK__Employee__Superv__1FCDBCEB" FromRole="Employee" ToRole="Employee1" />
+          <NavigationProperty Name="Employee2" Relationship="Self.FK__Employee__Superv__1FCDBCEB" FromRole="Employee1" ToRole="Employee" />
+          <NavigationProperty Name="WorkOns" Relationship="Self.FK__WorkOn__Employee__21B6055D" FromRole="Employee" ToRole="WorkOn" />
+        </EntityType>
+        <EntityType Name="Project">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="Name" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Location" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="DepartmentCode" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Department" Relationship="Self.FK_Project_Department" FromRole="Project" ToRole="Department" />
+          <NavigationProperty Name="WorkOns" Relationship="Self.FK__WorkOn__ProjectI__1DE57479" FromRole="Project" ToRole="WorkOn" />
+        </EntityType>
+        <EntityType Name="WorkOn">
+          <Key>
+            <PropertyRef Name="EmployeeSSN" />
+            <PropertyRef Name="ProjectID" />
+          </Key>
+          <Property Name="EmployeeSSN" Type="String" MaxLength="9" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="ProjectID" Type="Int32" Nullable="false" />
+          <Property Name="Hours" Type="Double" Nullable="false" />
+          <NavigationProperty Name="Employee" Relationship="Self.FK__WorkOn__Employee__21B6055D" FromRole="WorkOn" ToRole="Employee" />
+          <NavigationProperty Name="Project" Relationship="Self.FK__WorkOn__ProjectI__1DE57479" FromRole="WorkOn" ToRole="Project" />
+        </EntityType>
+        <Association Name="FK__Departmen__Depar__1CF15040">
+          <End Role="Department" Type="Self.Department" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="DepartmentLocation" Type="Self.DepartmentLocation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="DepartmentLocation">
+              <PropertyRef Name="DepartmentCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Employee__Depart__1ED998B2">
+          <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+          <End Role="Employee" Type="Self.Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="Employee">
+              <PropertyRef Name="DepartmentCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Project_Department">
+          <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+          <End Role="Project" Type="Self.Project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="Project">
+              <PropertyRef Name="DepartmentCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ManagerSSN">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="1" />
+          <End Role="Department" Type="Self.Department" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="SSN" />
+            </Principal>
+            <Dependent Role="Department">
+              <PropertyRef Name="ManagerSSN" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Dependent__Emplo__1DE57479">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Dependent" Type="Self.Dependent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="SSN" />
+            </Principal>
+            <Dependent Role="Dependent">
+              <PropertyRef Name="EmployeeSSN" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Employee__Superv__1FCDBCEB">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="0..1" />
+          <End Role="Employee1" Type="Self.Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="SSN" />
+            </Principal>
+            <Dependent Role="Employee1">
+              <PropertyRef Name="SupervisorSSN" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__WorkOn__Employee__21B6055D">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="WorkOn" Type="Self.WorkOn" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="SSN" />
+            </Principal>
+            <Dependent Role="WorkOn">
+              <PropertyRef Name="EmployeeSSN" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__WorkOn__ProjectI__1DE57479">
+          <End Role="Project" Type="Self.Project" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="WorkOn" Type="Self.WorkOn" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="WorkOn">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="EmployeeEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Departments" EntityType="Self.Department" />
+          <EntitySet Name="DepartmentLocations" EntityType="Self.DepartmentLocation" />
+          <EntitySet Name="Dependents" EntityType="Self.Dependent" />
+          <EntitySet Name="Employees" EntityType="Self.Employee" />
+          <EntitySet Name="Projects" EntityType="Self.Project" />
+          <EntitySet Name="WorkOns" EntityType="Self.WorkOn" />
+          <AssociationSet Name="FK__Departmen__Depar__1CF15040" Association="Self.FK__Departmen__Depar__1CF15040">
+            <End Role="Department" EntitySet="Departments" />
+            <End Role="DepartmentLocation" EntitySet="DepartmentLocations" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Employee__Depart__1ED998B2" Association="Self.FK__Employee__Depart__1ED998B2">
+            <End Role="Department" EntitySet="Departments" />
+            <End Role="Employee" EntitySet="Employees" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Project_Department" Association="Self.FK_Project_Department">
+            <End Role="Department" EntitySet="Departments" />
+            <End Role="Project" EntitySet="Projects" />
+          </AssociationSet>
+          <AssociationSet Name="ManagerSSN" Association="Self.ManagerSSN">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="Department" EntitySet="Departments" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Dependent__Emplo__1DE57479" Association="Self.FK__Dependent__Emplo__1DE57479">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="Dependent" EntitySet="Dependents" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Employee__Superv__1FCDBCEB" Association="Self.FK__Employee__Superv__1FCDBCEB">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="Employee1" EntitySet="Employees" />
+          </AssociationSet>
+          <AssociationSet Name="FK__WorkOn__Employee__21B6055D" Association="Self.FK__WorkOn__Employee__21B6055D">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="WorkOn" EntitySet="WorkOns" />
+          </AssociationSet>
+          <AssociationSet Name="FK__WorkOn__ProjectI__1DE57479" Association="Self.FK__WorkOn__ProjectI__1DE57479">
+            <End Role="Project" EntitySet="Projects" />
+            <End Role="WorkOn" EntitySet="WorkOns" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="EmployeeModelStoreContainer" CdmEntityContainer="EmployeeEntities">
+          <EntitySetMapping Name="Departments">
+            <EntityTypeMapping TypeName="EmployeeModel.Department">
+              <MappingFragment StoreEntitySet="Department">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="ManagerSSN" ColumnName="ManagerSSN" />
+                <ScalarProperty Name="ManagerStartDate" ColumnName="ManagerStartDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DepartmentLocations">
+            <EntityTypeMapping TypeName="EmployeeModel.DepartmentLocation">
+              <MappingFragment StoreEntitySet="DepartmentLocation">
+                <ScalarProperty Name="DepartmentCode" ColumnName="DepartmentCode" />
+                <ScalarProperty Name="Location" ColumnName="Location" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Dependents">
+            <EntityTypeMapping TypeName="EmployeeModel.Dependent">
+              <MappingFragment StoreEntitySet="Dependent">
+                <ScalarProperty Name="EmployeeSSN" ColumnName="EmployeeSSN" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
+                <ScalarProperty Name="Relationship" ColumnName="Relationship" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Employees">
+            <EntityTypeMapping TypeName="EmployeeModel.Employee">
+              <MappingFragment StoreEntitySet="Employee">
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="MidName" ColumnName="MidName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="SSN" ColumnName="SSN" />
+                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="Salary" ColumnName="Salary" />
+                <ScalarProperty Name="SupervisorSSN" ColumnName="SupervisorSSN" />
+                <ScalarProperty Name="DepartmentCode" ColumnName="DepartmentCode" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Projects">
+            <EntityTypeMapping TypeName="EmployeeModel.Project">
+              <MappingFragment StoreEntitySet="Project">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="DepartmentCode" ColumnName="DepartmentCode" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="WorkOns">
+            <EntityTypeMapping TypeName="EmployeeModel.WorkOn">
+              <MappingFragment StoreEntitySet="WorkOn">
+                <ScalarProperty Name="EmployeeSSN" ColumnName="EmployeeSSN" />
+                <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
+                <ScalarProperty Name="Hours" ColumnName="Hours" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

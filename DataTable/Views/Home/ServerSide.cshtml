@@ -1,0 +1,99 @@
+﻿@model DataTable.Models.EmployeeModel
+
+@{
+    ViewBag.Title = "ServerSide";
+}
+<h2>Server Side</h2>
+
+<form class="form-inline">
+    <div class="form-group">
+        @Html.Label("SearchSSN", "SSN: ")
+        @Html.TextBox("SearchSSN", null, new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        @Html.Label("SearchName", "Name: ")
+        @Html.TextBox("SearchName", null, new { @class = "form-control" })
+    </div>
+    <button type="button" id="Search" class="btn btn-info "><span class="glyphicon glyphicon-search"></span> Search</button>
+</form>
+
+<div id="pnlResult" class="panel panel-default top-buffer" style="display: none;">
+    <div class="panel-body">
+        <table id="example" class="table table-striped" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>SSN</th>
+                    <th>Name</th>
+                    <th>Birthday</th>
+                    <th>Salary</th>
+                    <th>Department</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script>
+        var table;
+
+        $(function () {
+            $("#Search").on("click", function () {
+                if (table) {
+                    table.ajax.reload();
+                } else {
+                    bindTable();
+                }
+
+                $("#pnlResult").show();
+            });
+
+            function bindTable() {
+                $.extend(true, $.fn.dataTable.defaults, {
+                    searching: false
+                });
+
+                table = $("#example").DataTable({
+                    //searching: false,
+                    lengthChange: false,
+                    pageLength: 5,
+                    //responsive: true,
+                    processing: true,
+                    serverSide: true,
+                    scrollX: true,
+                    ajax: {
+                        url: "/Home/GetEmployee",
+                        type: "POST",
+                        data: function (d) {
+                            d.searchSSN = $('#SearchSSN').val();
+                            d.searchName = $('#SearchName').val();
+                        }
+                    },
+                    columns: [
+                        { data: "SSN" },
+                        { data: "FullName" },
+                        { data: "DisplayBirthDay" },
+                        {
+                            data: "Salary",
+                            render: function (data, type, row) {
+                                return data.toLocaleString();
+                            }
+                        },
+                        { data: "DepartmentName" },
+                        {
+                            render: function (data, type, row) {
+                                return '<button class="btn btn-primary btn-sm" onclick="alert(\'' + row.SSN + '\');"><span class="glyphicon glyphicon-pencil"></span></button> '
+                                     + '<button class="btn btn-danger btn-sm" onclick="alert(\'' + row.FullName + '\');"><span class="glyphicon glyphicon-trash"></span></button>';
+                            },
+                            orderable: false
+                        }
+                    ]
+                });
+            }
+
+        });
+    </script>
+}
